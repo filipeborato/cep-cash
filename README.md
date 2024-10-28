@@ -59,7 +59,7 @@ Replace {cep} with a valid Brazilian postal code (CEP) to query address informat
 - **API Endpoint**: `/cep/{cep}` (GET)  
   - This endpoint fetches address data from the ViaCEP API for the given `{cep}`.
   - If the address is already cached, it returns the cached data from Redis.
-  - The cache expires after 1 hour.
+  - The cache expires after 24 hours.
 
 ### Example Request
 ```
