@@ -14,28 +14,30 @@ class AddressController
     private $httpClient;
 
     public function __construct()
-    {
-        // Conexão com o Redis usando o adaptador de cache do Symfony
-        $redisConnection = RedisAdapter::createConnection('redis://redis:6379');
+    {        
+        $redisConnection = RedisAdapter::createConnection($_ENV['REDIS_URL']);
         $this->cache = new RedisAdapter($redisConnection);
-
-        $this->httpClient = new Client(); // Inicializa o cliente Guzzle
+        $this->httpClient = new Client(); 
     }
 
     #[Route('/cep/{cep}', name: 'get_address', methods: ['GET'])]
     public function getAddress(string $cep): JsonResponse
     {        
         $cacheKey = 'cep_' . $cep;
-
-        $cachedAddress = $this->cache->get($cacheKey, function (ItemInterface $item) use ($cep) {           
-            
-            $response = $this->httpClient->get("https://viacep.com.br/ws/{$cep}/json/");
-            if ($response->getStatusCode() !== 200) {
-                throw new \Exception('Erro ao consultar o ViaCEP');
-            }
-            
-            return json_decode($response->getBody()->getContents(), true);
-        });
+        try {
+            $cachedAddress = $this->cache->get($cacheKey, function (ItemInterface $item) use ($cep) {           
+                
+                $response = $this->httpClient->get("https://viacep.com.br/ws/{$cep}/json/");
+                if ($response->getStatusCode() !== 200) {
+                    throw new \Exception('Erro ao consultar o ViaCEP');
+                }
+                
+                return json_decode($response->getBody()->getContents(), true);
+            });
+        }
+         catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage(), 'erro' => true], 400);
+        }
 
         return new JsonResponse($cachedAddress);
     }
