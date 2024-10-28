@@ -26,7 +26,7 @@ class AddressController
         $cacheKey = 'cep_' . $cep;
         try {
             $cachedAddress = $this->cache->get($cacheKey, function (ItemInterface $item) use ($cep) {           
-                
+                $item->expiresAfter(86400);
                 $response = $this->httpClient->get("https://viacep.com.br/ws/{$cep}/json/");
                 if ($response->getStatusCode() !== 200) {
                     throw new \Exception('Erro ao consultar o ViaCEP');
