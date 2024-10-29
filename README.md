@@ -12,8 +12,8 @@ This project provides an API endpoint that fetches address information from the 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/filipeborato/cep-cash.git
+cd cep-cash
 ```
 ### 2. Build and Run the Containers
 Run the following command to build and start the containers:
